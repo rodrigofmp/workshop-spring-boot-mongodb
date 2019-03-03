@@ -18,6 +18,10 @@ import com.rodrigofmp.workshopmongo.domain.User;
 import com.rodrigofmp.workshopmongo.dto.UserDTO;
 import com.rodrigofmp.workshopmongo.services.UserService;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @RestController
 @RequestMapping(value="/users")
 public class UserResource {
@@ -25,6 +29,7 @@ public class UserResource {
 	@Autowired
 	private UserService service;
 	
+	@ApiOperation(value="Lista todos os usuários")
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<List<UserDTO>> findAll() {
 		List<User> list = service.findAll();
@@ -32,12 +37,14 @@ public class UserResource {
 		return ResponseEntity.ok().body(listDTO);
 	}
 	
+	@ApiOperation(value="Busca usuário por id")
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<UserDTO> findById(@PathVariable String id) {
 		User obj = service.findById(id);
 		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
 	
+	@ApiOperation(value="Inclui usuário")
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert(@RequestBody UserDTO objDTO) {
 		User obj = service.fromDTO(objDTO);
@@ -46,12 +53,17 @@ public class UserResource {
 		return ResponseEntity.created(uri).build();
 	}
 	
+	@ApiOperation(value="Exclui usuário")
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Não é possível excluir um usuário que possui posts"),
+			@ApiResponse(code = 404, message = "Código inexistente") })
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteById(@PathVariable String id) {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation(value="Atualiza usuário")
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Void> update(@PathVariable String id, @RequestBody UserDTO objDTO) {
 		User obj = service.fromDTO(objDTO);
@@ -60,6 +72,7 @@ public class UserResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation(value="Busca posts do usuário")
 	@RequestMapping(value="/{id}/posts", method=RequestMethod.GET)
 	public ResponseEntity<List<Post>> findPosts(@PathVariable String id) {
 		User obj = service.findById(id);

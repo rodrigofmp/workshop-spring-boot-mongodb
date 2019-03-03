@@ -15,6 +15,8 @@ import com.rodrigofmp.workshopmongo.domain.Post;
 import com.rodrigofmp.workshopmongo.resources.util.URL;
 import com.rodrigofmp.workshopmongo.services.PostService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping(value="/posts")
 public class PostResource {
@@ -22,12 +24,14 @@ public class PostResource {
 	@Autowired
 	private PostService service;
 	
+	@ApiOperation(value="Busca post por id")
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Post> findById(@PathVariable String id) {
 		Post obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
 	
+	@ApiOperation(value="Busca posts pelo título")
 	@RequestMapping(value="/titlesearch", method=RequestMethod.GET)
 	public ResponseEntity<List<Post>> findByTitle(@RequestParam(value="text", defaultValue="") String text) {
 		text = URL.decodeParam(text);
@@ -35,6 +39,7 @@ public class PostResource {
 		return ResponseEntity.ok().body(list);
 	}
 	
+	@ApiOperation(value="Busca posts pelo título, data inicial e final")
 	@RequestMapping(value="/fullsearch", method=RequestMethod.GET)
 	public ResponseEntity<List<Post>> fullSearch(
 			@RequestParam(value="text", defaultValue="") String text,
